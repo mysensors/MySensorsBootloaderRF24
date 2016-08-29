@@ -5,44 +5,43 @@ MySensors bootloader supporting over-the-air firmware updates
 All initialization the bootloader does (finding parent / requesting nodeId on first start) uses the same packets as a normal MySensors sketch. There is no need for the controller to distinguish between packets from the bootloader and packets from normal sketch execution. The controller only needs to care about two additional request/response communications. All communication is binary.
 <h2>FirmwareConfig</h2>
 <ul>
-<li>the bootloader sends a FirmwareConfigRequest packet to the gateway to request information about the firmware it should execute:
+<li>the bootloader sends a RequestFirmwareConfig packet to the gateway to request information about the firmware it should execute:
 <p>
-typedef struct<br/>
-{<br/>
-&nbsp;uint16_t type;<br/>
-&nbsp;uint16_t version;<br/>
-} FirmwareConfigRequest;
-</p>
-<li>the gateway (the controller) responds with a FirmwareConfigResponse including details about the firmware the sensor should execute:
-<p>
-typedef struct<br/>
-{<br/>
+typedef struct {<br/>
 &nbsp;uint16_t type;<br/>
 &nbsp;uint16_t version;<br/>
 &nbsp;uint16_t blocks;<br/>
 &nbsp;uint16_t crc;<br/>
-} FirmwareConfigResponse;
+&nbsp;uint16_t BLVersion;<br/>
+} RequestFirmwareConfig;<br/>
+</p>
+<li>the gateway (the controller) responds with a NodeFirmwareConfig including details about the firmware the sensor should execute:
+<p>
+typedef struct {<br/>
+&nbsp;uint16_t type;<br/>
+&nbsp;uint16_t version;<br/>
+&nbsp;uint16_t blocks;<br/>
+&nbsp;uint16_t crc;<br/>
+} NodeFirmwareConfig;<br/>
 </p>
 </ul>
 <h2>Firmware</h2>
 <ul>
-<li>the bootloader sends a FirmwareRequest packet to the gateway to request a specific subset (block) of the compiled firmware:
+<li>the bootloader sends a RequestFirmwareBlock packet to the gateway to request a specific subset (block) of the compiled firmware:
 <p>
-typedef struct<br/>
-{<br/>
+typedef struct {<br/>
 &nbsp;uint16_t type;<br/>
 &nbsp;uint16_t version;<br/>
 &nbsp;uint16_t block;<br/>
-} FirmwareRequest;
+} RequestFirmwareBlock;<br/>
 </p>
-<li>the gateway (the controller) responds with a FirmwareResponse including the specific block of the compiled firmware:
+<li>the gateway (the controller) responds with a ResponseFirmwareBlock including the specific block of the compiled firmware:
 </ul>
 <p>
-typedef struct<br/>
-{<br/>
+typedef struct {<br/>
 &nbsp;uint16_t type;<br/>
 &nbsp;uint16_t version;<br/>
 &nbsp;uint16_t block;<br/>
 &nbsp;uint8_t data[FIRMWARE_BLOCK_SIZE];<br/>
-} FirmwareResponse;
+} ResponseFirmwareBlock;<br/>
 </p> 
