@@ -36,7 +36,6 @@ typedef struct {<br/>
 } RequestFirmwareBlock;<br/>
 </p>
 <li>the gateway (the controller) responds with a ResponseFirmwareBlock including the specific block of the compiled firmware:
-</ul>
 <p>
 typedef struct {<br/>
 &nbsp;uint16_t type;<br/>
@@ -45,3 +44,4 @@ typedef struct {<br/>
 &nbsp;uint8_t data[FIRMWARE_BLOCK_SIZE];<br/>
 } ResponseFirmwareBlock;<br/>
 </p> 
+</ul>
