@@ -1,5 +1,4 @@
 PROJECT = MYSBootloader
-INCLUDES = ../libraries/MySensors
 
 MCU = atmega328p
 CLK = 16000000L
