@@ -13,10 +13,8 @@ ISP_EFUSE = 06
 ISP_ARGS = -c$(ISP_PROTOCOL) -P$(ISP_PORT) -b$(ISP_SPEED) -p$(ISP_MCU)
 
 ifeq ($(OS),Windows_NT)
-	BINPATH = C:/Program Files (x86)/Arduino/hardware/tools/avr/bin/
-	JAVAPATH = C:/Program Files/Java/jdk1.7.0_40/bin/
-	JAVAC = $(JAVAPATH)javac.exe
-	JAVA = $(JAVAPATH)java.exe
+	BINPATH = C:/Arduino/hardware/tools/avr/bin/
+	INCLUDES = C:/Arduino/hardware/tools/avr/avr/include/avr
 else
 	UNAME_S := $(shell uname -s)
 	UNAME_P := $(shell uname -p)
@@ -32,9 +30,8 @@ else
 	endif
 endif
 
-CFLAGS = -x c -mno-interrupts -funsigned-char -funsigned-bitfields -DF_CPU=$(CLK)-Os -fno-inline-small-functions -fno-split-wide-types -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -Wall -mmcu=$(MCU) -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" 
-LDFLAGS = -nostartfiles -Wl,-s -Wl,-static -Wl,-Map="$(OutputFileName).map" -Wl,--start-group  -Wl,--end-group -Wl,--gc-sections -mrelax -Wl,-section-start=.text=0x7800 -mmcu=$(MCU)  
-
+CFLAGS = -funsigned-char -funsigned-bitfields -DF_CPU=$(CLK) -Os -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -Wall -Wextra -Wundef -pedantic -mmcu=atmega328p -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" 
+LDFLAGS = -nostartfiles -Wl,-s -Wl,-static -Wl,-Map="$(OutputFileName).map" -Wl,--start-group -Wl,--end-group -Wl,--gc-sections -mrelax -Wl,-section-start=.text=0x7800 -mmcu=$(MCU)  
 
 
 all: clean out
