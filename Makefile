@@ -2,9 +2,11 @@ PROJECT = MYSBootloader
 
 MCU = atmega328p
 CLK = 16000000L
+BAUDRATE = 57600
+
 
 ISP_PORT = com5
-ISP_SPEED = 115200
+ISP_SPEED = $(BAUDRATE)
 ISP_PROTOCOL = stk500v2
 ISP_MCU = m328p
 ISP_HFUSE = DA
@@ -13,8 +15,8 @@ ISP_EFUSE = 06
 ISP_ARGS = -c$(ISP_PROTOCOL) -P$(ISP_PORT) -b$(ISP_SPEED) -p$(ISP_MCU)
 
 ifeq ($(OS),Windows_NT)
-	BINPATH = C:/Arduino/hardware/tools/avr/bin/
-	INCLUDES = C:/Arduino/hardware/tools/avr/avr/include/avr
+	BINPATH = C:/Program Files (x86)/Atmel/Studio/7.0/toolchain/avr8/avr8-gnu-toolchain/bin/
+	INCLUDES = C:/Program Files (x86)/Atmel/Studio/7.0/toolchain/avr8/avr8-gnu-toolchain/avr/include/avr		
 else
 	UNAME_S := $(shell uname -s)
 	UNAME_P := $(shell uname -p)
@@ -30,7 +32,7 @@ else
 	endif
 endif
 
-CFLAGS = -funsigned-char -funsigned-bitfields -DF_CPU=$(CLK) -Os -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -Wall -Wextra -Wundef -pedantic -mmcu=atmega328p -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" 
+CFLAGS = -funsigned-char -funsigned-bitfields -DF_CPU=$(CLK) -DBAUD_RATE=$(BAUDRATE) -Os -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -Wall -Wextra -Wundef -pedantic -mmcu=atmega328p -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" 
 LDFLAGS = -nostartfiles -Wl,-s -Wl,-static -Wl,-Map="$(OutputFileName).map" -Wl,--start-group -Wl,--end-group -Wl,--gc-sections -mrelax -Wl,-section-start=.text=0x7800 -mmcu=$(MCU)  
 
 
@@ -42,7 +44,7 @@ clean:
 	- rm *.hex
 
 $(PROJECT).o: $(PROJECT).c
-	"$(BINPATH)avr-gcc" $(CFLAGS) -I$(INCLUDES) $< -o $@
+	"$(BINPATH)avr-gcc" $(CFLAGS) -I"$(INCLUDES)" $< -o $@
 
 $(PROJECT).elf: $(PROJECT).o
 	"$(BINPATH)avr-gcc" $(LDFLAGS) -o $@ $< -lm
