@@ -59,7 +59,7 @@ static uint8_t processRX(void) {
 			if (mGetCommand(_inMsg) == C_INTERNAL) {
 				if (_inMsg.type == I_FIND_PARENT_RESPONSE) {
 					// static parent found? use it for communication
-					configuredParentFound = (_inMsg.sender == _configuredParentID);
+					configuredParentFound |= (_inMsg.sender == _configuredParentID);
 					if ( ((_inMsg.payload.bValue < _eepromNodeConfig.distance - 1) && ( !configuredParentFound) ) || (_inMsg.sender == _configuredParentID)) {
 						// got new routing info, update settings
 						_eepromNodeConfig.distance = _inMsg.payload.bValue + 1;
