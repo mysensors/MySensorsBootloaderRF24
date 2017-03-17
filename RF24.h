@@ -101,7 +101,7 @@ static bool writeBuf(uint8_t* buf, uint8_t len ) {
 	
 	// max retries exceeded, flush tx buffer
 	if(status & _BV(MAX_RT)) {
-		// flush RX FIFO
+		// flush TX FIFO
 		_flushTX();
 	}
 	

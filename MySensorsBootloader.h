@@ -28,11 +28,11 @@ extern uint8_t _save_MCUSR;
 
 #define MAX_FIRMWARE_REQUEST_RESEND	(8)
 
-void _buildMessageProto(const uint8_t destination, const uint8_t sensor, const uint8_t type, const uint8_t const version_length, const uint8_t command_ack_payload) {
+void _buildMessageProto(const uint8_t type, const uint8_t const version_length, const uint8_t command_ack_payload) {
 	_outMsg.sender = _eepromNodeConfig.nodeId;
 	_outMsg.last = _eepromNodeConfig.nodeId;
-	_outMsg.destination = destination;
-	_outMsg.sensor = sensor;
+	//_outMsg.destination = destination;
+	_outMsg.sensor = NODE_SENSOR_ID;
 	_outMsg.type = type;
 	_outMsg.command_ack_payload = command_ack_payload;
 	_outMsg.version_length = version_length;
@@ -41,7 +41,9 @@ void _buildMessageProto(const uint8_t destination, const uint8_t sensor, const u
 #define MSG_SIGN	(0)
 #define ReqACK		(0)
 
-#define _buildMessage(destination,sensor,command,type,payload_type,length) _buildMessageProto(destination,sensor,type,( (length << 3) | (MSG_SIGN << 2) | (PROTOCOL_VERSION & 3) ),( (payload_type << 5) | (ReqACK << 3) | (command & 7) ) )
+#define _buildMessage(command,type,payload_type,length) _buildMessageProto(type,( (length << 3) | (MSG_SIGN << 2) | (PROTOCOL_VERSION & 3) ),( (payload_type << 5) | (ReqACK << 3) | (command & 7) ) )
+
+#define _setMessageDestination(dest) (_outMsg.destination = dest)
 
 static bool sendMessage(void) {
 	watchdogReset();
@@ -163,10 +165,14 @@ static void MySensorsBootloader(void) {
 			_eepromNodeConfig.parentNodeId = AUTO;
 			_eepromNodeConfig.distance = DISTANCE_INVALID;
 			// prepare for I_FIND_PARENTS
-			_buildMessage(BROADCAST_ADDRESS,NODE_SENSOR_ID,C_INTERNAL,I_FIND_PARENT_REQUEST, P_BYTE, 1);
+			 _setMessageDestination(BROADCAST_ADDRESS);
+
+			 _buildMessage(C_INTERNAL,I_FIND_PARENT_REQUEST, P_BYTE, 1);
 			_writeRegister(SETUP_RETR, 0);	
 			// wait until 0xFE command received => does not exist, therefore process incoming messages until timeout
-			send_process_type(0xFE,0);
+			// force 1 retry in order to ensure first message reception fron routres. Work arround for NRF24L01 PID problem
+			send_process_type(0xFE,1);
+			_setMessageDestination(GATEWAY_ADDRESS);
 			if ( _eepromNodeConfig.parentNodeId!=AUTO ) {
 				BL_STATE = BL_CHECK_ID;
 			}
@@ -180,7 +186,7 @@ static void MySensorsBootloader(void) {
 			#endif
 			// check ID
 			if(_eepromNodeConfig.nodeId==GATEWAY_ADDRESS || _eepromNodeConfig.nodeId==AUTO) {
-				_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_INTERNAL,I_ID_REQUEST, P_BYTE, 0);
+				_buildMessage(C_INTERNAL,I_ID_REQUEST, P_BYTE, 0);
 				if (send_process_type(I_ID_RESPONSE,3)) {
 					#if defined(DEBUG)
 						// atoi uses ~50bytes needed for led debug
@@ -208,7 +214,7 @@ static void MySensorsBootloader(void) {
 			// singing preferences, inform GW that BL does not require signed messages
 			_outMsg.payload.data[0] = SIGNING_PRESENTATION_VERSION_1;
 			_outMsg.payload.data[1] = SIGNING_PRESENTATION_VALUE;
-			_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_INTERNAL,I_SIGNING_PRESENTATION,P_CUSTOM,2);
+			_buildMessage(C_INTERNAL,I_SIGNING_PRESENTATION,P_CUSTOM,2);
 			send_process_type(I_SIGNING_PRESENTATION,0);
 			// update with current CRC in case of memory corruption or failed transmission
 			_eepromNodeFirmwareConfig.crc = calcCRCrom(_eepromNodeFirmwareConfig.blocks*FIRMWARE_BLOCK_SIZE);
@@ -217,7 +223,7 @@ static void MySensorsBootloader(void) {
 			// add BL information
 			firmwareConfigRequest->BLVersion = MYSBOOTLOADER_VERSION;
 			// Send a firmware config request to GW/controller
-			_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_STREAM,ST_FIRMWARE_CONFIG_REQUEST,P_CUSTOM,sizeof(requestFirmwareConfig_t));
+			_buildMessage(C_STREAM,ST_FIRMWARE_CONFIG_REQUEST,P_CUSTOM,sizeof(requestFirmwareConfig_t));
 			if(send_process_type(ST_FIRMWARE_CONFIG_RESPONSE, 3)) {
 				#ifdef DEBUG
 					DEBUG_PORT = DEBUG_CONFIG_RECEIVED;
@@ -271,7 +277,7 @@ static void MySensorsBootloader(void) {
 			firmwareRequest->version = _eepromNodeFirmwareConfig.version_data.version;
 			firmwareRequest->block = RequestedBlock - 1;
 			
-			_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_STREAM,ST_FIRMWARE_REQUEST,P_CUSTOM,sizeof(requestFirmwareBlock_t));
+			_buildMessage(C_STREAM,ST_FIRMWARE_REQUEST,P_CUSTOM,sizeof(requestFirmwareBlock_t));
 			
 			// request FW from controller, load FW counting backwards
 			if(send_process_type(ST_FIRMWARE_RESPONSE, MAX_FIRMWARE_REQUEST_RESEND)) {
