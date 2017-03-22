@@ -9,6 +9,7 @@
 #define Definitions_H
 
 #define FIRMWARE_BLOCK_SIZE	(16)
+#define EEPROM_SIZE 1024			// 1024 bytes for ATMEGA328
 
 #define false	(0)
 #define true	(1)

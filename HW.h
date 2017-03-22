@@ -223,20 +223,13 @@ static uint16_t calcCRCrom (const uint16_t len) {
 
 	uint16_t _internal_crc = 0xFFFF;	// init
 	uint16_t address = 0x0000;
-	uint16_t count = len;
 
-	// prevent overflow
-	if(count>BOOTLOADER_START_ADDRESS) {
-		count = BOOTLOADER_START_ADDRESS;	
-	}
-
-	// calc
-	while (count) {
+	// calc and prevent overflow
+	while (address < len && address < BOOTLOADER_START_ADDRESS) {
 		uint8_t _rom_byte;
 		// read a flash byte and increment the address
 		__asm__ ("lpm %0,Z+\n" : "=r" (_rom_byte), "=z" (address): "1" (address));
 		_internal_crc = crc16_update(_internal_crc,_rom_byte);
-		count--;
 	}
 	return _internal_crc;
 }

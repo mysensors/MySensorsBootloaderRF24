@@ -28,11 +28,11 @@ extern uint8_t _save_MCUSR;
 
 #define MAX_FIRMWARE_REQUEST_RESEND	(8)
 
-void _buildMessageProto(const uint8_t destination, const uint8_t sensor, const uint8_t type, const uint8_t const version_length, const uint8_t command_ack_payload) {
+void _buildMessageProto(const uint8_t type, const uint8_t const version_length, const uint8_t command_ack_payload) {
 	_outMsg.sender = _eepromNodeConfig.nodeId;
 	_outMsg.last = _eepromNodeConfig.nodeId;
-	_outMsg.destination = destination;
-	_outMsg.sensor = sensor;
+	//_outMsg.destination = destination;
+	_outMsg.sensor = NODE_SENSOR_ID;
 	_outMsg.type = type;
 	_outMsg.command_ack_payload = command_ack_payload;
 	_outMsg.version_length = version_length;
@@ -41,7 +41,9 @@ void _buildMessageProto(const uint8_t destination, const uint8_t sensor, const u
 #define MSG_SIGN	(0)
 #define ReqACK		(0)
 
-#define _buildMessage(destination,sensor,command,type,payload_type,length) _buildMessageProto(destination,sensor,type,( (length << 3) | (MSG_SIGN << 2) | (PROTOCOL_VERSION & 3) ),( (payload_type << 5) | (ReqACK << 3) | (command & 7) ) )
+#define _buildMessage(command,type,payload_type,length) _buildMessageProto(type,( (length << 3) | (MSG_SIGN << 2) | (PROTOCOL_VERSION & 3) ),( (payload_type << 5) | (ReqACK << 3) | (command & 7) ) )
+
+#define _setMessageDestination(dest) (_outMsg.destination = dest)
 
 static bool sendMessage(void) {
 	watchdogReset();
@@ -49,6 +51,7 @@ static bool sendMessage(void) {
 }
 
 static uint8_t processRX(void) {
+	static uint8_t configuredParentFound = false;
 	uint8_t result = 0xFF;
 	if ( _dataAvailable() ) {
 		(void)readMessage(_inMsg.array);
@@ -58,10 +61,8 @@ static uint8_t processRX(void) {
 			if (mGetCommand(_inMsg) == C_INTERNAL) {
 				if (_inMsg.type == I_FIND_PARENT_RESPONSE) {
 					// static parent found? use it for communication
-					if (_inMsg.sender == _configuredParentID ) {
-						_configuredParentFound = true;
-					}
-					if ( ((_inMsg.payload.bValue < _eepromNodeConfig.distance - 1) && ( !_configuredParentFound) ) || (_inMsg.sender == _configuredParentID)) {
+					configuredParentFound |= (_inMsg.sender == _configuredParentID);
+					if ( ((_inMsg.payload.bValue < _eepromNodeConfig.distance - 1) && ( !configuredParentFound) ) || (_inMsg.sender == _configuredParentID)) {
 						// got new routing info, update settings
 						_eepromNodeConfig.distance = _inMsg.payload.bValue + 1;
 						_eepromNodeConfig.parentNodeId = _inMsg.sender;
@@ -109,11 +110,24 @@ static bool send_process_type(const uint8_t response_type, uint8_t retries) {
 	return response;
 }
 
+// One byte atoi function
+static uint8_t byteAtoi(char *str)
+{
+    uint8_t res = 0; // Initialize result
+  
+    // Iterate through all characters of input string and
+    // update result
+    for (uint8_t i = 0; str[i] != '\0'; ++i)
+        res = res*10 + str[i] - '0';
+  
+    // return result.
+    return res;
+}
 
 static void MySensorsBootloader(void) {
-	nodeFirmwareConfig_t newNodeFirmwareConfig;
 	nodeFirmwareConfig_t _eepromNodeFirmwareConfig;
 	uint16_t RequestedBlock = 0u;
+	uint16_t _newFirmwareCrc = 0xFFFF;
 	// mappings
 	requestFirmwareConfig_t *firmwareConfigRequest = (requestFirmwareConfig_t*)_outMsg.payload.data;
 	nodeFirmwareConfig_t *firmwareConfigResponse = (nodeFirmwareConfig_t *)_inMsg.payload.data;
@@ -148,14 +162,17 @@ static void MySensorsBootloader(void) {
 			#endif
 			// save parent node id for static parent - if static parent not found, use closest node to gateway for communication
 			_configuredParentID = _eepromNodeConfig.parentNodeId;
-			_configuredParentFound = false;			
 			_eepromNodeConfig.parentNodeId = AUTO;
 			_eepromNodeConfig.distance = DISTANCE_INVALID;
 			// prepare for I_FIND_PARENTS
-			_buildMessage(BROADCAST_ADDRESS,NODE_SENSOR_ID,C_INTERNAL,I_FIND_PARENT_REQUEST, P_BYTE, 1);
+			 _setMessageDestination(BROADCAST_ADDRESS);
+
+			 _buildMessage(C_INTERNAL,I_FIND_PARENT_REQUEST, P_BYTE, 1);
 			_writeRegister(SETUP_RETR, 0);	
 			// wait until 0xFE command received => does not exist, therefore process incoming messages until timeout
-			send_process_type(0xFE,0);
+			// force 1 retry in order to ensure first message reception fron routres. Work arround for NRF24L01 PID problem
+			send_process_type(0xFE,1);
+			_setMessageDestination(GATEWAY_ADDRESS);
 			if ( _eepromNodeConfig.parentNodeId!=AUTO ) {
 				BL_STATE = BL_CHECK_ID;
 			}
@@ -169,13 +186,14 @@ static void MySensorsBootloader(void) {
 			#endif
 			// check ID
 			if(_eepromNodeConfig.nodeId==GATEWAY_ADDRESS || _eepromNodeConfig.nodeId==AUTO) {
-				_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_INTERNAL,I_ID_REQUEST, P_BYTE, 0);
+				_buildMessage(C_INTERNAL,I_ID_REQUEST, P_BYTE, 0);
 				if (send_process_type(I_ID_RESPONSE,3)) {
 					#if defined(DEBUG)
 						// atoi uses ~50bytes needed for led debug
 						uint8_t newID = 254;
 					#else
-						uint8_t newID = (uint8_t)atoi(_inMsg.payload.data);
+						// Less than 40 bytes atoi version
+						uint8_t newID = (uint8_t)byteAtoi(_inMsg.payload.data);
 					#endif
 					eeprom_update_byte((uint8_t*)EEPROM_NODE_ID_ADDRESS, newID);	// save ID in eeprom
 					BL_STATE = BL_READ_CONFIG;
@@ -196,7 +214,7 @@ static void MySensorsBootloader(void) {
 			// singing preferences, inform GW that BL does not require signed messages
 			_outMsg.payload.data[0] = SIGNING_PRESENTATION_VERSION_1;
 			_outMsg.payload.data[1] = SIGNING_PRESENTATION_VALUE;
-			_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_INTERNAL,I_SIGNING_PRESENTATION,P_CUSTOM,2);
+			_buildMessage(C_INTERNAL,I_SIGNING_PRESENTATION,P_CUSTOM,2);
 			send_process_type(I_SIGNING_PRESENTATION,0);
 			// update with current CRC in case of memory corruption or failed transmission
 			_eepromNodeFirmwareConfig.crc = calcCRCrom(_eepromNodeFirmwareConfig.blocks*FIRMWARE_BLOCK_SIZE);
@@ -205,16 +223,31 @@ static void MySensorsBootloader(void) {
 			// add BL information
 			firmwareConfigRequest->BLVersion = MYSBOOTLOADER_VERSION;
 			// Send a firmware config request to GW/controller
-			_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_STREAM,ST_FIRMWARE_CONFIG_REQUEST,P_CUSTOM,sizeof(requestFirmwareConfig_t));
+			_buildMessage(C_STREAM,ST_FIRMWARE_CONFIG_REQUEST,P_CUSTOM,sizeof(requestFirmwareConfig_t));
 			if(send_process_type(ST_FIRMWARE_CONFIG_RESPONSE, 3)) {
 				#ifdef DEBUG
 					DEBUG_PORT = DEBUG_CONFIG_RECEIVED;
 				#endif
-				// save received firmware config
-				memcpy(&newNodeFirmwareConfig,_inMsg.payload.data,sizeof(nodeFirmwareConfig_t));
-				if (memcmp(&_eepromNodeFirmwareConfig,&newNodeFirmwareConfig,sizeof(nodeFirmwareConfig_t))) {
+
+				if (memcmp(&_eepromNodeFirmwareConfig,&_inMsg.payload.data,sizeof(nodeFirmwareConfig_t))) {
+
+					if (firmwareConfigResponse->blocks == 0 && firmwareConfigResponse->crc == 0xDA7A) {
+						// cmd 0x01 clear eeprom
+						if(firmwareConfigResponse->type_command.bl_command == 0x01) {
+							for(uint16_t i = 0; i < EEPROM_SIZE; i++) eeprom_update_byte((uint8_t *)i,0xFF);
+						} else 
+						// cmd 0x02 set id
+						// cmd 0x03 set parent id
+						if(firmwareConfigResponse->type_command.bl_command == 0x02 || firmwareConfigResponse->type_command.bl_command == 0x03) {
+							eeprom_update_byte((uint8_t*)(EEPROM_NODE_ID_ADDRESS+firmwareConfigResponse->type_command.bl_command-2), (uint8_t)firmwareConfigResponse->version_data.bl_data);
+						}
+						BL_STATE = BL_READ_CONFIG;
+					} else			
+
 					// update needed, do not allow writes to bootloader section, i.e. max block < 0x7800 / 0x10 = 0x780 = 1920
 					if (firmwareConfigResponse->blocks < (BOOTLOADER_START_ADDRESS/FIRMWARE_BLOCK_SIZE)) {
+						// save received firmware config
+						memcpy(&_eepromNodeFirmwareConfig,_inMsg.payload.data,sizeof(nodeFirmwareConfig_t));
 						BL_STATE = BL_INIT_UPDATE;
 					}
 				}
@@ -226,13 +259,13 @@ static void MySensorsBootloader(void) {
 			#endif
 			BL_STATE = BL_DO_UPDATE;	// default
 			// copy new FW details for update
-			memcpy(&_eepromNodeFirmwareConfig, &newNodeFirmwareConfig, sizeof(nodeFirmwareConfig_t));
 			// invalidate CRC
+			_newFirmwareCrc = _eepromNodeFirmwareConfig.crc;
 			_eepromNodeFirmwareConfig.crc = 0xFFFF;
 			// update EEPROM, save new FW details in case of faulty transmissions
 			eeprom_update_block(&_eepromNodeFirmwareConfig, (uint8_t*)EEPROM_FIRMWARE_TYPE_ADDRESS, sizeof(nodeFirmwareConfig_t));
 			// set FW block to request
-			RequestedBlock = newNodeFirmwareConfig.blocks;		
+			RequestedBlock = _eepromNodeFirmwareConfig.blocks;		
 		}
 		else if(BL_STATE == BL_DO_UPDATE) {
 			#ifdef DEBUG
@@ -240,11 +273,11 @@ static void MySensorsBootloader(void) {
 			#endif
 			
 			// maps to outMsg
-			firmwareRequest->type = newNodeFirmwareConfig.type_command.type;
-			firmwareRequest->version = newNodeFirmwareConfig.version_data.version;
+			firmwareRequest->type = _eepromNodeFirmwareConfig.type_command.type;
+			firmwareRequest->version = _eepromNodeFirmwareConfig.version_data.version;
 			firmwareRequest->block = RequestedBlock - 1;
 			
-			_buildMessage(GATEWAY_ADDRESS,NODE_SENSOR_ID,C_STREAM,ST_FIRMWARE_REQUEST,P_CUSTOM,sizeof(requestFirmwareBlock_t));
+			_buildMessage(C_STREAM,ST_FIRMWARE_REQUEST,P_CUSTOM,sizeof(requestFirmwareBlock_t));
 			
 			// request FW from controller, load FW counting backwards
 			if(send_process_type(ST_FIRMWARE_RESPONSE, MAX_FIRMWARE_REQUEST_RESEND)) {
@@ -261,15 +294,17 @@ static void MySensorsBootloader(void) {
 					if(!--RequestedBlock) {
 						// if last block requested, proceed with the validation
 						// validate FW CRC
-						if( calcCRCrom(newNodeFirmwareConfig.blocks * FIRMWARE_BLOCK_SIZE) != newNodeFirmwareConfig.crc) {
+						if( calcCRCrom(_eepromNodeFirmwareConfig.blocks * FIRMWARE_BLOCK_SIZE) != _newFirmwareCrc) {
 							// received FW is invalid, invalidate CRC
 							// new FW length 0 blocks
-							newNodeFirmwareConfig.blocks = 0u;
+							_eepromNodeFirmwareConfig.blocks = 0u;
 							// CRC will evaluate to 0xFFFF with 0 blocks
-							newNodeFirmwareConfig.crc = 0u;
+							_eepromNodeFirmwareConfig.crc = 0u;
+						} else {
+							_eepromNodeFirmwareConfig.crc = _newFirmwareCrc;					
 						}
 						// write FW settings to EEPROM
-						eeprom_update_block(&newNodeFirmwareConfig, (uint8_t*)EEPROM_FIRMWARE_TYPE_ADDRESS, sizeof(nodeFirmwareConfig_t));
+						eeprom_update_block(&_eepromNodeFirmwareConfig, (uint8_t*)EEPROM_FIRMWARE_TYPE_ADDRESS, sizeof(nodeFirmwareConfig_t));
 						BL_STATE = BL_READ_CONFIG;
 					}
 				}

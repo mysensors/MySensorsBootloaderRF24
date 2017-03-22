@@ -253,7 +253,8 @@ typedef enum {
 #define miSetPayloadType(_pt) BF_SET(command_ack_payload, _pt, 5, 3) //!< Internal setter for payload type field
 #define miGetPayloadType() (uint8_t)BF_GET(command_ack_payload, 5, 3) //!< Internal getter for payload type field
 
-
+#pragma GCC diagnostic push
+#pragma GCC diagnostic ignored "-Wpedantic"
 typedef union {
 	struct {
 		uint8_t last;            	 // 8 bit - Id of last node this message passed
@@ -292,5 +293,6 @@ typedef union {
 	};
 	uint8_t array[HEADER_SIZE + MAX_PAYLOAD + 1];
 } __attribute__((packed)) MyMessage;
+#pragma GCC diagnostic pop
 
 #endif

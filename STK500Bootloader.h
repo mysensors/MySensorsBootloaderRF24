@@ -110,6 +110,13 @@ static void STK500Bootloader(void) {
 			_eepromNodeFirmwareConfig.blocks = FW_len/FIRMWARE_BLOCK_SIZE;
 			_eepromNodeFirmwareConfig.crc = calcCRCrom(FW_len);
 			eeprom_update_block((void*)&_eepromNodeFirmwareConfig, (uint8_t*)EEPROM_FIRMWARE_TYPE_ADDRESS, sizeof(nodeFirmwareConfig_t));
+			
+			// Invalidate Firmware infos instead of "version and type = 0xFFFF, adjust CRC and blocks"
+			// This will save 28 bytes
+//			for(uint8_t i = 0; i < 8; i++) {
+//				eeprom_update_byte((uint8_t*)EEPROM_FIRMWARE_TYPE_ADDRESS+i, 0xFF);
+//			}
+		
 			exit_signal = true;
 			verifySpace();
 		} else verifySpace();
