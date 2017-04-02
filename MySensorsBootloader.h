@@ -1,8 +1,8 @@
 /* 
- MYSBootloader 1.3pre3
+ MYSBootloader 1.3.0-beta.4
  OTA RF24 bootloader for MySensors: http://www.mysensors.org
- Based on MySensors library 2.1
- Developed and maintained by tekka 2016
+ Based on MySensors library 2.2
+ Developed and maintained by tekka 2017
 */
 
 #ifndef MYSBootloader_H
@@ -28,10 +28,9 @@ extern uint8_t _save_MCUSR;
 
 #define MAX_FIRMWARE_REQUEST_RESEND	(8)
 
-void _buildMessageProto(const uint8_t type, const uint8_t const version_length, const uint8_t command_ack_payload) {
+void _buildMessageProto(const uint8_t type, const uint8_t version_length, const uint8_t command_ack_payload) {
 	_outMsg.sender = _eepromNodeConfig.nodeId;
 	_outMsg.last = _eepromNodeConfig.nodeId;
-	//_outMsg.destination = destination;
 	_outMsg.sensor = NODE_SENSOR_ID;
 	_outMsg.type = type;
 	_outMsg.command_ack_payload = command_ack_payload;
@@ -41,9 +40,8 @@ void _buildMessageProto(const uint8_t type, const uint8_t const version_length, 
 #define MSG_SIGN	(0)
 #define ReqACK		(0)
 
-#define _buildMessage(command,type,payload_type,length) _buildMessageProto(type,( (length << 3) | (MSG_SIGN << 2) | (PROTOCOL_VERSION & 3) ),( (payload_type << 5) | (ReqACK << 3) | (command & 7) ) )
-
-#define _setMessageDestination(dest) (_outMsg.destination = dest)
+#define _buildMessage(__command, __type, __payload_type, __length) _buildMessageProto(__type,( (__length << 3) | (MSG_SIGN << 2) | (PROTOCOL_VERSION & 3) ),( (__payload_type << 5) | (ReqACK << 3) | (__command & 7) ) )
+#define _setMessageDestination(__dest) (_outMsg.destination = __dest)
 
 static bool sendMessage(void) {
 	watchdogReset();
@@ -51,7 +49,6 @@ static bool sendMessage(void) {
 }
 
 static uint8_t processRX(void) {
-	static uint8_t configuredParentFound = false;
 	uint8_t result = 0xFF;
 	if ( _dataAvailable() ) {
 		(void)readMessage(_inMsg.array);
@@ -61,8 +58,11 @@ static uint8_t processRX(void) {
 			if (mGetCommand(_inMsg) == C_INTERNAL) {
 				if (_inMsg.type == I_FIND_PARENT_RESPONSE) {
 					// static parent found? use it for communication
-					configuredParentFound |= (_inMsg.sender == _configuredParentID);
-					if ( ((_inMsg.payload.bValue < _eepromNodeConfig.distance - 1) && ( !configuredParentFound) ) || (_inMsg.sender == _configuredParentID)) {
+					if (_inMsg.sender == _configuredParentID ) {	// -2 bytes compared to: _configuredParentFound |= (_inMsg.sender == _configuredParentID);
+						_configuredParentFound = true;
+					}
+					
+					if ( ((_inMsg.payload.bValue < _eepromNodeConfig.distance - 1) && ( !_configuredParentFound) ) || (_inMsg.sender == _configuredParentID)) {
 						// got new routing info, update settings
 						_eepromNodeConfig.distance = _inMsg.payload.bValue + 1;
 						_eepromNodeConfig.parentNodeId = _inMsg.sender;
@@ -111,7 +111,7 @@ static bool send_process_type(const uint8_t response_type, uint8_t retries) {
 }
 
 // One byte atoi function
-static uint8_t byteAtoi(char *str)
+static uint8_t byteAtoi(const char *str)
 {
     uint8_t res = 0; // Initialize result
   
@@ -166,11 +166,10 @@ static void MySensorsBootloader(void) {
 			_eepromNodeConfig.distance = DISTANCE_INVALID;
 			// prepare for I_FIND_PARENTS
 			 _setMessageDestination(BROADCAST_ADDRESS);
-
 			 _buildMessage(C_INTERNAL,I_FIND_PARENT_REQUEST, P_BYTE, 1);
 			_writeRegister(SETUP_RETR, 0);	
 			// wait until 0xFE command received => does not exist, therefore process incoming messages until timeout
-			// force 1 retry in order to ensure first message reception fron routres. Work arround for NRF24L01 PID problem
+			// force 1 retry in order to ensure first message reception from routers. Work around for NRF24L01 PID problem
 			send_process_type(0xFE,1);
 			_setMessageDestination(GATEWAY_ADDRESS);
 			if ( _eepromNodeConfig.parentNodeId!=AUTO ) {

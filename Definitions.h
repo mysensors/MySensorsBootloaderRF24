@@ -1,8 +1,8 @@
 /* 
- MYSBootloader 1.3pre3
+ MYSBootloader 1.3.0-beta.4
  OTA RF24 bootloader for MySensors: http://www.mysensors.org
- Based on MySensors library 2.1
- Developed and maintained by tekka 2016
+ Based on MySensors library 2.2
+ Developed and maintained by tekka 2017
 */
 
 #ifndef Definitions_H
