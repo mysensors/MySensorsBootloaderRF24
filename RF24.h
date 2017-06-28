@@ -37,16 +37,16 @@ uint8_t base_addr[RF24_ADDR_WIDTH] = { RF24_BASE_RADIO_ID };
 
 static uint8_t SPIBytes(uint8_t addr, uint8_t* buf, uint8_t len, bool aReadMode) {
 	CSN_LOW();
+	_delay_us(10);
 	uint8_t status = SPItransfer( addr );
-	
 	while ( len-- ) {
 		if (aReadMode) {		
 			status = SPItransfer(NOP);
 			if(buf!=NULL) *buf++ = status;
 		} else status = SPItransfer(*buf++);
 	}
-
 	CSN_HIGH();
+	_delay_us(10);
 	return status;
 }
 
@@ -72,13 +72,16 @@ static uint8_t writeAddress(uint8_t addr, uint8_t buf) {
 #define _flushRX() burstWriteAddress(FLUSH_RX, NULL, 0)
 
 
+
+
 static void Flush_RXTX_CLI(void) {
 	// flush RX and TX buffer
-	_flushRX();
-	_flushTX();
+	 _flushRX();
+	 _flushTX();
 	// clear interrupts
 	_resetInterrupts();
 }
+
 
 static bool writeBuf(uint8_t* buf, uint8_t len ) {
 	uint8_t status;
@@ -86,25 +89,19 @@ static bool writeBuf(uint8_t* buf, uint8_t len ) {
 	//_burstWriteRegister( broadcast ? W_TX_PAYLOAD_NO_ACK : W_TX_PAYLOAD, buf, len) ;
 	_burstWriteRegister( W_TX_PAYLOAD, buf, len) ;
 	// CE pulse to start transmission
-	CE_HIGH();
+	CE_HIGH();  // 4 us until CNS_LOW
+	_delay_us(4);
 	do {
 		// get status byte
-		CSN_LOW();
-		status = SPItransfer(NOP);
-		CSN_HIGH();
-		
+		status = _getStatus();
 	} while( !( status  & ( _BV(TX_DS) | _BV(MAX_RT) )) );
-	
 	CE_LOW();
-	
 	_writeRegister(STATUS, _BV(TX_DS) | _BV(MAX_RT) ); 
-	
 	// max retries exceeded, flush tx buffer
 	if(status & _BV(MAX_RT)) {
 		// flush TX FIFO
 		_flushTX();
 	}
-	
 	return (status  & _BV(TX_DS) ); 
 }
 
@@ -153,14 +150,15 @@ static bool writeMessage(const uint8_t recipient, uint8_t* buf, const uint8_t le
 	// flush FIFO and interrupts
 	Flush_RXTX_CLI();
 	// go!
-	CE_HIGH();
-
+	CE_HIGH(); // 4 us until CNS_LOW. No delay need here.
 	return result;
 }
+
 
 static bool initRadio(){		 
 	CE_LOW();
 	CSN_HIGH();
+
 	// set address width
 	_writeRegister(SETUP_AW, RF24_ADDR_WIDTH - 2 );
 	// auto retransmit delay 1500us, auto retransmit count 0 (BROADCASTS)
