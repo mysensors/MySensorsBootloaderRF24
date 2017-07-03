@@ -50,7 +50,6 @@ MyMessage _outMsg;
 MyMessage _inMsg;
 nodeConfig_t _eepromNodeConfig;
 uint8_t _configuredParentID;
-uint8_t _configuredParentFound = false;
 uint8_t _save_MCUSR;
 
 

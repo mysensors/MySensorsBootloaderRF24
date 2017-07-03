@@ -15,6 +15,8 @@
 
 #include "stk500.h"
 
+extern void updateEepromNodeFirmwareConfig(uint8_t *eepromNodeFirmwareConfig);
+
 
 static void verifySpace(void) {
 	if (getch() != CRC_EOP) {
@@ -87,7 +89,6 @@ static void STK500Bootloader(void) {
 			getch();
 			length = getch();
 			getch();
-
 			verifySpace();
 			do {
 				// read a flash byte and increment the address
@@ -102,25 +103,18 @@ static void STK500Bootloader(void) {
 			putch(SIGNATURE_2);
 			
 		} else if (ch == STK_LEAVE_PROGMODE) {
-			
 			// version and type = 0xFFFF, adjust CRC and blocks
 			nodeFirmwareConfig_t _eepromNodeFirmwareConfig;
 			_eepromNodeFirmwareConfig.type_command.type = 0xFFFF;
 			_eepromNodeFirmwareConfig.version_data.version = 0xFFFF;
 			_eepromNodeFirmwareConfig.blocks = FW_len/FIRMWARE_BLOCK_SIZE;
 			_eepromNodeFirmwareConfig.crc = calcCRCrom(FW_len);
-			eeprom_update_block((void*)&_eepromNodeFirmwareConfig, (uint8_t*)EEPROM_FIRMWARE_TYPE_ADDRESS, sizeof(nodeFirmwareConfig_t));
-			
-			// Invalidate Firmware infos instead of "version and type = 0xFFFF, adjust CRC and blocks"
-			// This will save 28 bytes
-//			for(uint8_t i = 0; i < 8; i++) {
-//				eeprom_update_byte((uint8_t*)EEPROM_FIRMWARE_TYPE_ADDRESS+i, 0xFF);
-//			}
-		
+			updateEepromNodeFirmwareConfig((uint8_t*)&_eepromNodeFirmwareConfig);
 			exit_signal = true;
 			verifySpace();
-		} else verifySpace();
-		
+		} else {
+			verifySpace();
+		}
 		putch(STK_OK);
 	}
 }
