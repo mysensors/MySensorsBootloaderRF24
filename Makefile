@@ -44,7 +44,7 @@ clean:
 	- rm *.hex
 
 $(PROJECT).o: $(PROJECT).c
-	"$(BINPATH)avr-gcc" $(CFLAGS) -I"$(INCLUDES)" $< -o $@
+	"$(BINPATH)avr-gcc" -I"$(INCLUDES)" $(CFLAGS) $< -o $@
 
 $(PROJECT).elf: $(PROJECT).o
 	"$(BINPATH)avr-gcc" $(LDFLAGS) -o $@ $< -lm
