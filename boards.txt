@@ -48,7 +48,7 @@ proMYSBL.bootloader.high_fuses=0xDA
 proMYSBL.bootloader.extended_fuses=0x06
 proMYSBL.bootloader.unlock_bits=0x3F
 proMYSBL.bootloader.lock_bits=0x0F
-proMYSBL.bootloader.file=MySensors/MYSBootloader.hex
+proMYSBL.bootloader.file=MySensors/MYSBootloader_16MHz.hex
 
 proMYSBL.build.mcu=atmega328p
 proMYSBL.build.f_cpu=16000000L
