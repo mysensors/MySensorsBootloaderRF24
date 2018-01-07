@@ -1,45 +1,53 @@
 /* 
- MYSBootloader 1.3.0-beta.4
- OTA RF24 bootloader for MySensors: http://www.mysensors.org
- Based on MySensors library 2.2
- Developed and maintained by tekka 2017
- 
- Tested with MYSController (goo.gl/9DCWNo) 
- MCU: ATmega328p
-  
- History:
-
- * Version 1.3.0-beta.4
- - Code optimization => reintroduction of bootloader commands: Akubi
-
- * Version 1.3.0-beta.3
- - Optimization / Refactorings
- 
- * Version 1.3pre
- - redesign update process
- - implement STK500 protocol / serial upload
- - preferred parent with fallback option
- - save MCUSR, can be retrieved by application
-
- * Version 1.2
- - internal version, PoC
- 
- * Version 1.1
- - use eeprom_update instead of eeprom_write to reduce wear out
- - bootloader commands: erase eeprom, set node id
- - verify incoming FW blocks for type & address
- - communicate over static parent (if set and found) else broadcast to find nearest node
- - adjusted timings 
- 
- * Version 1.0
- - initial release
- 
- This program is free software; you can redistribute it and/or
- modify it under the terms of the GNU General Public License
- version 2 as published by the Free Software Foundation.
+ * MYSBootloader 1.3.0-rc.1
+ * OTA RF24 bootloader for MySensors: https://www.mysensors.org
+ * Based on MySensors library 2.2
+ * Developed and maintained by tekka 2018
+ * 
+ * Tested with MYSController https://www.mysensors.org/controller/myscontroller
+ * MCU: ATmega328p
+ *
+ * This program is free software; you can redistribute it and/or
+ * modify it under the terms of the GNU General Public License
+ * version 2 as published by the Free Software Foundation.
+ *   
+ * ******************************************************************************************************
+ * History
+ * 
+ * v1.3.0-rc.1
+ * - Add message length verification
+ * - Stripped away RF24 communication driver redundancies and generics
+ * - General maintenance, .hex update
+ *
+ * v1.3.0-beta.4
+ * - Code optimization => reintroduction of bootloader commands: Akubi
+ *
+ * v1.3.0-beta.3
+ * - Optimization / Refactorings
+ * 
+ * v1.3pre
+ * - redesign update process
+ * - implement STK500 protocol / serial upload
+ * - preferred parent with fallback option
+ * - save MCUSR, can be retrieved by application
+ *
+ * v1.2
+ * - internal version, PoC
+ * 
+ * v1.1
+ * - use eeprom_update instead of eeprom_write to reduce wear out
+ * - bootloader commands: erase eeprom, set node id
+ * - verify incoming FW blocks for type & address
+ * - communicate over static parent (if set and found) else broadcast to find nearest node
+ * - adjusted timings 
+ * 
+ * v1.0
+ * - initial release
+ *
+ * Info:
+ * BL size max. 2048 bytes - FLASH segment setting: .text=0x3C00
+ *
  */
-
-
 
 // RF24 communication settings *****************************************************************************************
 #define RF24_CHANNEL		(76)			// RF channel for the sensor net, 0-127; default 76
@@ -53,6 +61,7 @@
 // Options *************************************************************************************************************
 #define WATCHDOG_ON_SKETCH_START			// WDT on when application starts
 #define WDT_TIMEOUT			WATCHDOG_8S		// WDT timeout
+#define BOOTLOADER_COMMANDS					// Enable low level bootloader commands
 
 // SPI bus setting *****************************************************************************************************
 #define SPI_PINS_CE9_CSN10							
@@ -68,7 +77,6 @@
 #define DEBUG_PORT	PORTD
 #define DEBUG_DDR	DDRD
 
-
 #include "Core.h"
 
 // prototype
@@ -77,21 +85,23 @@ int main(void) __attribute__ ((OS_main)) __attribute__ ((section (".init9")));
 // implementation
 int main(void) {
 	asm volatile ("clr __zero_reg__");
-	_save_MCUSR = MCUSR;				// save the status register for the reset cause
+	// save the status register for the reset cause
+	_save_MCUSR = MCUSR;
+	// reset status register
 	MCUSR = 0;
-	watchdogConfig(WDT_TIMEOUT);		// enable watchdog
+	// enable watchdog	
+	watchdogConfig(WDT_TIMEOUT);
 	#ifdef DEBUG
 		DEBUG_DDR = 0xFF;
 		DEBUG_PORT = DEBUG_INIT;
 	#endif
-
+	// signal startup
 	blinkLed();
-
 	// STK500_bootloader runs only if reset reason was EXTERNAL RESET/POWER ON
 	if (_save_MCUSR & _BV(EXTRF) ) {
 		STK500Bootloader();
 	}
-
 	MySensorsBootloader();
-
 }
+
+

@@ -1,4 +1,4 @@
-# MYSBootloader 1.3.0-beta.4
+# MYSBootloader 1.3.0-rc.1
 MySensors bootloader supporting over-the-air firmware updates 
 
 <h1>Technical details to write your own controller</h1>

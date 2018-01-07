@@ -1,9 +1,9 @@
 /* 
- MYSBootloader 1.3.0-beta.4
- OTA RF24 bootloader for MySensors: http://www.mysensors.org
- Based on MySensors library 2.2
- Developed and maintained by tekka 2017
-*/
+ * MYSBootloader 1.3.0-rc.1
+ * OTA RF24 bootloader for MySensors: https://www.mysensors.org
+ * Based on MySensors library 2.2
+ * Developed and maintained by tekka 2018
+ */
 
 #ifndef HW_H
 #define HW_H
@@ -15,18 +15,16 @@
 # define UART_SRL UBRR0L
 # define UART_UDR UDR0
 
-
+/* set the UART baud rate defaults */
 #ifndef BAUD_RATE
-	#if F_CPU >= 16000000L
-		#define BAUD_RATE   115200
-	#elif F_CPU >= 8000000L
-		#define BAUD_RATE   38400L
+	#if F_CPU >= 8000000L
+		#define BAUD_RATE   115200L
 	#elif F_CPU >= 1000000L
-		#define BAUD_RATE   9600L
+		#define BAUD_RATE   9600L   // 19200 also supported, but with significant error
 	#elif F_CPU >= 128000L
-		#define BAUD_RATE   4800L
+		#define BAUD_RATE   4800L   // Good for 128kHz internal RC
 	#else
-		#define BAUD_RATE 1200L
+		#define BAUD_RATE 1200L     // Good even at 32768Hz
 	#endif
 #endif
 
@@ -37,34 +35,29 @@
 #define BAUD_SETTING (( (F_CPU + BAUD_RATE * 4L) / ((BAUD_RATE * 8L))) - 1 )
 #define BAUD_ACTUAL (F_CPU/(8 * ((BAUD_SETTING)+1)))
 #if BAUD_ACTUAL <= BAUD_RATE
-#define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
-#if BAUD_ERROR >= 5
-#error BAUD_RATE error greater than -5%
-#elif BAUD_ERROR >= 2
-#warning BAUD_RATE error greater than -2%
-#endif
+	#define BAUD_ERROR (( 100*(BAUD_RATE - BAUD_ACTUAL) ) / BAUD_RATE)
+	#if BAUD_ERROR >= 5
+		#error BAUD_RATE error greater than -5%
+	#elif BAUD_ERROR >= 2
+		#warning BAUD_RATE error greater than -2%
+	#endif
 #else
-#define BAUD_ERROR (( 100*(BAUD_ACTUAL - BAUD_RATE) ) / BAUD_RATE)
-#if BAUD_ERROR >= 5
-#error BAUD_RATE error greater than 5%
-#elif BAUD_ERROR >= 2
-#warning BAUD_RATE error greater than 2%
-#endif
+	#define BAUD_ERROR (( 100*(BAUD_ACTUAL - BAUD_RATE) ) / BAUD_RATE)
+	#if BAUD_ERROR >= 5
+		#error BAUD_RATE error greater than 5%
+	#elif BAUD_ERROR >= 2
+		#warning BAUD_RATE error greater than 2%
+	#endif
 #endif
 
 #if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 > 250
-#error Unachievable baud rate (too slow) BAUD_RATE
+	#error Unachievable baud rate (too slow) BAUD_RATE
 #endif // baud rate slow check
 #if (F_CPU + BAUD_RATE * 4L) / (BAUD_RATE * 8L) - 1 < 3
-#if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
-#error Unachievable baud rate (too fast) BAUD_RATE
+	#if BAUD_ERROR != 0 // permit high bitrates (ie 1Mbps@16MHz) if error is zero
+		#error Unachievable baud rate (too fast) BAUD_RATE
+	#endif
 #endif
-#endif
-
-#ifndef UART
-#define UART 0
-#endif
-
 
 // Watchdog definitions and functions
 #define WATCHDOG_OFF    (0)
@@ -80,13 +73,13 @@
 #define WATCHDOG_8S     (_BV(WDP3) | _BV(WDP0) | _BV(WDE))
 
 
-static inline void watchdogReset() {
+static inline void watchdogReset(void) {
 	__asm__ __volatile__ ("wdr\n");
 }
 
-void watchdogConfig(const uint8_t x) {
+static void watchdogConfig(const uint8_t wdtConfig) {
 	WDTCSR = _BV(WDCE) | _BV(WDE);
-	WDTCSR = x;
+	WDTCSR = wdtConfig;
 }
 
 
@@ -168,7 +161,7 @@ static uint8_t SPItransfer(const uint8_t value) {
 	while(!(SPSR & _BV(SPIF)));		// wait until transmitted
 	return SPDR;
 }
-inline void SPIclose(void) {
+static inline void SPIclose(void) {
 	// disable hardware SPI
 	SPCR = 0;	
 }
@@ -187,7 +180,7 @@ void putch(const uint8_t ch) {
 	UART_UDR = ch;
 }
 
-uint8_t getch(void) {
+static uint8_t getch(void) {
 	// wait until char received
 	while(!(UART_SRA & _BV(RXC0)));
 	// 10 bytes
@@ -198,7 +191,7 @@ uint8_t getch(void) {
 	return UART_UDR;
 }
 
-static void writeTemporaryBuffer(const uint16_t address, const uint16_t data) {
+static inline void writeTemporaryBuffer(const uint16_t address, const uint16_t data) {
 	// fill temporary page buffer
 	__boot_page_fill_short(address, data);
 }
@@ -220,10 +213,10 @@ static uint16_t crc16_update(uint16_t crc, const uint8_t data) {
 }
 
 static uint16_t calcCRCrom (const uint16_t len) {
-
-	uint16_t _internal_crc = 0xFFFF;	// init
+	// init CRC
+	uint16_t _internal_crc = 0xFFFF;	
+	// start address for CRC calculation
 	uint16_t address = 0x0000;
-
 	// calc and prevent overflow
 	while (address < len && address < BOOTLOADER_START_ADDRESS) {
 		uint8_t _rom_byte;
@@ -237,11 +230,10 @@ static uint16_t calcCRCrom (const uint16_t len) {
 static void blinkLed(void) {
 	LED_DDR |= _BV(LED_PIN);
 	//300ms total
-	uint8_t count = 6;
-	do {
+	for (uint8_t i = 0; i < 6; i++) {
 		LED_PORT ^= _BV(LED_PIN);
-		_delay_ms(50);
-	} while (--count);	
+		_delay_ms(50);		
+	}
 }
 
 
