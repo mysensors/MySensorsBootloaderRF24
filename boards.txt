@@ -1,62 +1,48 @@
-# See: http://code.google.com/p/arduino/wiki/Platforms
-
-menu.cpu=Processor
-
-uno.name=Arduino Uno Optiboot
-
-uno.vid.0=0x2341
-uno.pid.0=0x0043
-uno.vid.1=0x2341
-uno.pid.1=0x0001
-
-uno.upload.tool=avrdude
-uno.upload.protocol=arduino
-uno.upload.maximum_size=32256
-uno.upload.maximum_data_size=2048
-uno.upload.speed=115200
-
-uno.bootloader.tool=avrdude
-uno.bootloader.low_fuses=0xFF
-uno.bootloader.high_fuses=0xDE
-uno.bootloader.extended_fuses=0x05
-uno.bootloader.unlock_bits=0x3F
-uno.bootloader.lock_bits=0x0F
-uno.bootloader.file=optiboot/optiboot_atmega328.hex
-
-uno.build.mcu=atmega328p
-uno.build.f_cpu=16000000L
-uno.build.board=AVR_UNO
-uno.build.core=arduino
-uno.build.variant=standard
-
-
-## Arduino Pro or Pro Mini (3V3 & 5V, 16 MHz) w/ ATmega328 MYSBootloader
+## Add these lines to your boards.txt file in the Arduino installation directory
+##
+## Arduino Pro or Pro Mini (3V3 & 5V, 1 - 16 MHz) w/ ATmega328 MYSBootloader
 ## -------------------------------------------------
 
+menu.frequency=Frequency
 
-proMYSBL.name=ATmega328 16Mhz MYSBootloader
+MYSBL.name=ATmega328 with MYSBootloader 1.3.0
 
-proMYSBL.upload.tool=avrdude
-proMYSBL.upload.protocol=arduino
-proMYSBL.upload.maximum_size=30720
-proMYSBL.upload.maximum_data_size=2048
-proMYSBL.upload.speed=115200
+MYSBL.upload.tool=avrdude
+MYSBL.upload.protocol=arduino
+MYSBL.upload.maximum_size=30720
+MYSBL.upload.maximum_data_size=2048
+MYSBL.bootloader.tool=avrdude
+MYSBL.build.mcu=atmega328p
+MYSBL.build.board=AVR_UNO
+MYSBL.build.core=arduino
+MYSBL.build.variant=standard
 
-proMYSBL.bootloader.tool=avrdude
-proMYSBL.bootloader.low_fuses=0xF7
-proMYSBL.bootloader.high_fuses=0xDA
-proMYSBL.bootloader.extended_fuses=0x06
-proMYSBL.bootloader.unlock_bits=0x3F
-proMYSBL.bootloader.lock_bits=0x0F
-proMYSBL.bootloader.file=MySensors/MYSBootloader_16MHz.hex
+MYSBL.menu.frequency.MYSBL16=16MHz XTAL
+MYSBL.menu.frequency.MYSBL16.f_cpu=16000000L
+MYSBL.menu.frequency.MYSBL16.upload.speed=115200
+MYSBL.menu.frequency.MYSBL16.bootloader.low_fuses=0xFF
+MYSBL.menu.frequency.MYSBL16.bootloader.high_fuses=0xD2
+MYSBL.menu.frequency.MYSBL16.bootloader.extended_fuses=0x06
+MYSBL.menu.frequency.MYSBL16.bootloader.unlock_bits=0x3F
+MYSBL.menu.frequency.MYSBL16.bootloader.lock_bits=0x0F
+MYSBL.menu.frequency.MYSBL16.bootloader.file=MySensors/MYSBootloader_16MHz.hex
 
-proMYSBL.build.mcu=atmega328p
-proMYSBL.build.f_cpu=16000000L
-proMYSBL.build.board=AVR_UNO
-proMYSBL.build.core=arduino
-proMYSBL.build.variant=standard
+MYSBL.menu.frequency.MYSBL8=8MHz RC
+MYSBL.menu.frequency.MYSBL8.f_cpu=8000000L
+MYSBL.menu.frequency.MYSBL8.upload.speed=115200
+MYSBL.menu.frequency.MYSBL8.bootloader.low_fuses=0xE2
+MYSBL.menu.frequency.MYSBL8.bootloader.high_fuses=0xD2
+MYSBL.menu.frequency.MYSBL8.bootloader.extended_fuses=0x06
+MYSBL.menu.frequency.MYSBL8.bootloader.unlock_bits=0x3F
+MYSBL.menu.frequency.MYSBL8.bootloader.lock_bits=0x0F
+MYSBL.menu.frequency.MYSBL8.bootloader.file=MySensors/MYSBootloader_8MHz.hex
 
-
-
-
-
+MYSBL.menu.frequency.MYSBL1=1MHz RC
+MYSBL.menu.frequency.MYSBL1.f_cpu=1000000L
+MYSBL.menu.frequency.MYSBL1.upload.speed=9600
+MYSBL.menu.frequency.MYSBL1.bootloader.low_fuses=0x62
+MYSBL.menu.frequency.MYSBL1.bootloader.high_fuses=0xD2
+MYSBL.menu.frequency.MYSBL1.bootloader.extended_fuses=0x06
+MYSBL.menu.frequency.MYSBL1.bootloader.unlock_bits=0x3F
+MYSBL.menu.frequency.MYSBL1.bootloader.lock_bits=0x0F
+MYSBL.menu.frequency.MYSBL1.bootloader.file=MySensors/MYSBootloader_1MHz.hex
