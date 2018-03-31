@@ -17,8 +17,10 @@
 
 /* set the UART baud rate defaults */
 #ifndef BAUD_RATE
-	#if F_CPU >= 8000000L
+	#if F_CPU >= 16000000L
 		#define BAUD_RATE   115200L
+	#elif F_CPU >= 8000000L
+		#define BAUD_RATE   57600L
 	#elif F_CPU >= 1000000L
 		#define BAUD_RATE   9600L   // 19200 also supported, but with significant error
 	#elif F_CPU >= 128000L
