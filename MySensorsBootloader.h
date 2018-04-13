@@ -56,7 +56,7 @@ static void _buildMessageProto(const uint8_t type, const uint8_t version_length,
 #define _buildMessage(__command, __type, __payload_type, __length) _buildMessageProto(__type,( (__length << 3) | (MSG_SIGN << 2) | (PROTOCOL_VERSION & 3) ),( (__payload_type << 5) | (ReqACK << 3) | (__command & 7) ) )
 #define _setMessageDestination(__dest) (_outMsg.destination = __dest)
 
-static bool inline sendMessage(void) {
+inline static bool sendMessage(void) {
 	//watchdogReset();
 	return writeMessage(_eepromNodeConfig.parentNodeId, _outMsg.array, HEADER_SIZE + mGetLength(_outMsg) );
 }
