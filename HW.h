@@ -117,6 +117,7 @@ static void watchdogConfig(const uint8_t wdtConfig) {
 	#define CE_DDR		DDRD	// DDR for CE
 	#define	CE_PIN		PD4		// Arduino Pin  4 <-> Bit 4 of port D
 #elif defined(SPI_PINS_CE7_CSN10)
+	// NRF24Duino Configuration
 	#define CE_PORT		PORTD	// port for CE
 	#define CE_DDR		DDRD	// DDR for CE
 	#define	CE_PIN		PD7		// Arduino Pin 7 <-> Bit 7 of port D

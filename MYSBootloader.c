@@ -64,7 +64,7 @@
 #define BOOTLOADER_COMMANDS					// Enable low level bootloader commands
 
 // SPI bus setting *****************************************************************************************************
-//#define SPI_PINS_CE9_CSN10							
+//define SPI_PINS_CE9_CSN10							
 //define SPI_PINS_CSN7_CE8
 #define SPI_PINS_CE7_CSN10
 
