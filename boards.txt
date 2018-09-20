@@ -46,3 +46,13 @@ MYSBL.menu.frequency.MYSBL1.bootloader.extended_fuses=0x06
 MYSBL.menu.frequency.MYSBL1.bootloader.unlock_bits=0x3F
 MYSBL.menu.frequency.MYSBL1.bootloader.lock_bits=0x0F
 MYSBL.menu.frequency.MYSBL1.bootloader.file=MySensors/MYSBootloader_1MHz.hex
+
+MYSBL.menu.frequency.MYSBLNRF=8MHz RC
+MYSBL.menu.frequency.MYSBLNRF.build.f_cpu=8000000L
+MYSBL.menu.frequency.MYSBLNRF.upload.speed=57600
+MYSBL.menu.frequency.MYSBLNRF.bootloader.low_fuses=0xFF
+MYSBL.menu.frequency.MYSBLNRF.bootloader.high_fuses=0xDA
+MYSBL.menu.frequency.MYSBLNRF.bootloader.extended_fuses=0x06
+MYSBL.menu.frequency.MYSBLNRF.bootloader.unlock_bits=0x3F
+MYSBL.menu.frequency.MYSBLNRF.bootloader.lock_bits=0x0F
+MYSBL.menu.frequency.MYSBLNRF.bootloader.file=MySensors/MYSBootloader_NRFduino_8MHz.hex
