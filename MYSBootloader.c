@@ -64,13 +64,26 @@
 #define BOOTLOADER_COMMANDS					// Enable low level bootloader commands
 
 // SPI bus setting *****************************************************************************************************
+#if !(defined(SPI_PINS_CE9_CSN10) || defined(SPI_PINS_CSN7_CE8))
+
+#ifdef USED_MAKEFILE_SPI_PINS
+#error Invalid value for SPI_PINS Makefile variable
+#endif
+
 #define SPI_PINS_CE9_CSN10							
 //define SPI_PINS_CSN7_CE8
+#endif
 
 // LED settings ********************************************************************************************************
+#ifndef LED_DDR
 #define LED_DDR     DDRB
+#endif
+#ifndef LED_PORT
 #define LED_PORT    PORTB
+#endif
+#ifndef LED_PIN
 #define LED_PIN		PINB5
+#endif
 
 // DEBUG settings ******************************************************************************************************
 //#define DEBUG

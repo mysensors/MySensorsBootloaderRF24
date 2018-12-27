@@ -32,7 +32,21 @@ else
 	endif
 endif
 
-CFLAGS = -funsigned-char -funsigned-bitfields -DF_CPU=$(CLK) -DBAUD_RATE=$(BAUDRATE) -Os -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -Wall -Wextra -Wundef -pedantic -mmcu=$(MCU) -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" 
+ADDITIONAL_DEFINES =
+ifneq ($(strip $(LED_DDR)),)
+ADDITIONAL_DEFINES += -DLED_DDR=$(LED_DDR)
+endif
+ifneq ($(strip $(LED_PORT)),)
+ADDITIONAL_DEFINES += -DLED_PORT=$(LED_PORT)
+endif
+ifneq ($(strip $(LED_PIN)),)
+ADDITIONAL_DEFINES += -DLED_PIN=$(LED_PIN)
+endif
+ifneq ($(strip $(SPI_PINS)),)
+ADDITIONAL_DEFINES += -D$(SPI_PINS) -DUSED_MAKEFILE_SPI_PINS
+endif
+
+CFLAGS = -funsigned-char -funsigned-bitfields -DF_CPU=$(CLK) -DBAUD_RATE=$(BAUDRATE) -Os -ffunction-sections -fdata-sections -fpack-struct -fshort-enums -mrelax -Wall -Wextra -Wundef -pedantic -mmcu=$(MCU) -c -std=gnu99 -MD -MP -MF "$(@:%.o=%.d)" -MT"$(@:%.o=%.d)" -MT"$(@:%.o=%.o)" $(ADDITIONAL_DEFINES) 
 LDFLAGS = -nostartfiles -Wl,-s -Wl,-static -Wl,-Map="$(OutputFileName).map" -Wl,--start-group -Wl,--end-group -Wl,--gc-sections -mrelax -Wl,-section-start=.text=0x7800 -mmcu=$(MCU)  
 
 
