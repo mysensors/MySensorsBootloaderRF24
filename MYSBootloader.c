@@ -66,11 +66,12 @@
 // SPI bus setting *****************************************************************************************************
 #define SPI_PINS_CE9_CSN10							
 //define SPI_PINS_CSN7_CE8
+//define SPI_PINS_CE7_CSN10
 
 // LED settings ********************************************************************************************************
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
-#define LED_PIN		PINB5
+#define LED_PIN		PINB5 //NRFDuino uses PIN 9 (PB1)
 
 // DEBUG settings ******************************************************************************************************
 //#define DEBUG
