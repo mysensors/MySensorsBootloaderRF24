@@ -4,8 +4,7 @@ for f in "${array[@]}"
  do
  for i in {1..110}
   do
-   # your-unix-command-here
-   sed -e "s/\${channel}/$i/" MYSBootloader.c.virgen > MYSBootloader.c
+   sed -e "s/\${channel}/$i/" MYSBootloader.c.original > MYSBootloader.c
    if [ $f == "16000000L" ]
    then
     baudios="115200"
@@ -21,10 +20,11 @@ for f in "${array[@]}"
     baudios="9600"
    fi
    
-   echo "Frecuency: $f Channel: $i Baudios: $baudios"
-   sed -e "s/\${frecuency}/$f/" -e "s/\${baudios}/$baudios/" Makefile.virgen > Makefile
+   echo "Frecuency: $f Channel: $i Baud rate: $baudios"
+   sed -e "s/\${frecuency}/$f/" -e "s/\${baudios}/$baudios/" Makefile.original > Makefile
    make
-   mv MYSBootloader.hex ./compilados/MYSBootloader.ch$i.$f.hex
+   mkdir compiled
+   mv MYSBootloader.hex ./compiled/MYSBootloader.ch$i.$f.hex
   
   done
 done
