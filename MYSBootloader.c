@@ -50,7 +50,7 @@
  */
 
 // RF24 communication settings *****************************************************************************************
-#define RF24_CHANNEL		(76)			// RF channel for the sensor net, 0-127; default 76
+#define RF24_CHANNEL		(110)			// RF channel for the sensor net, 0-127; default 76
 #define RF24_DATARATE		RF24_250KBPS	// RF24_250KBPS for 250kbs, RF24_1MBPS for 1Mbps, or RF24_2MBPS for 2Mbps
 #define RF24_PA_LEVEL		RF24_PA_MAX		// PA level, RF24_PA_MIN=-18dBm, RF24_PA_LOW=-12dBm, RF24_PA_HIGH=-6dBM, and RF24_PA_MAX=0dBm
 #define RF24_ADDR_WIDTH		(5)

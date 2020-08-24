@@ -1,0 +1,461 @@
+Archive member included to satisfy reference by file (symbol)
+
+/usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+                              MYSBootloader.o (__do_copy_data)
+/usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+                              MYSBootloader.o (__do_clear_bss)
+/usr/avr/sys-root/lib/avr5/libc.a(memcmp.o)
+                              MYSBootloader.o (memcmp)
+/usr/avr/sys-root/lib/avr5/libatmega328p.a(eerd_block.o)
+                              MYSBootloader.o (eeprom_read_block)
+/usr/avr/sys-root/lib/avr5/libatmega328p.a(eeupd_byte.o)
+                              MYSBootloader.o (eeprom_update_byte)
+
+Allocating common symbols
+Common symbol       size              file
+
+_outMsg             0x21              MYSBootloader.o
+_save_MCUSR         0x1               MYSBootloader.o
+_configuredParentID
+                    0x1               MYSBootloader.o
+_eepromNodeConfig   0x3               MYSBootloader.o
+_inMsg              0x21              MYSBootloader.o
+
+Discarded input sections
+
+ .text          0x0000000000000000        0x0 MYSBootloader.o
+ .data          0x0000000000000000        0x0 MYSBootloader.o
+ .bss           0x0000000000000000        0x0 MYSBootloader.o
+ .text          0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .data          0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .bss           0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .stab          0x0000000000000000       0xe4 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .stabstr       0x0000000000000000       0x67 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.mul
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.div
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc   0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.prologue
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.builtins
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.fmul
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text.libgcc.fixed
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+ .text          0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .data          0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .bss           0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .stab          0x0000000000000000       0xc0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .stabstr       0x0000000000000000       0x67 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.mul
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.div
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc   0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.prologue
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.builtins
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.fmul
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text.libgcc.fixed
+                0x0000000000000000        0x0 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+ .text          0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libc.a(memcmp.o)
+ .data          0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libc.a(memcmp.o)
+ .bss           0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libc.a(memcmp.o)
+ .text          0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eerd_block.o)
+ .data          0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eerd_block.o)
+ .bss           0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eerd_block.o)
+ .text          0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eeupd_byte.o)
+ .data          0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eeupd_byte.o)
+ .bss           0x0000000000000000        0x0 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eeupd_byte.o)
+
+Memory Configuration
+
+Name             Origin             Length             Attributes
+text             0x0000000000000000 0x0000000000020000 xr
+data             0x0000000000800060 0x000000000000ffa0 rw !x
+eeprom           0x0000000000810000 0x0000000000010000 rw !x
+fuse             0x0000000000820000 0x0000000000000400 rw !x
+lock             0x0000000000830000 0x0000000000000400 rw !x
+signature        0x0000000000840000 0x0000000000000400 rw !x
+user_signatures  0x0000000000850000 0x0000000000000400 rw !x
+*default*        0x0000000000000000 0xffffffffffffffff
+
+Linker script and memory map
+
+Address of section .data set to 0x800100
+START GROUP
+END GROUP
+Address of section .text set to 0x7800
+LOAD MYSBootloader.o
+LOAD /usr/avr/sys-root/lib/avr5/libm.a
+START GROUP
+LOAD /usr/lib64/gcc/avr/7/avr5/libgcc.a
+LOAD /usr/avr/sys-root/lib/avr5/libm.a
+LOAD /usr/avr/sys-root/lib/avr5/libc.a
+LOAD /usr/avr/sys-root/lib/avr5/libatmega328p.a
+END GROUP
+                0x0000000000020000                __TEXT_REGION_LENGTH__ = DEFINED (__TEXT_REGION_LENGTH__)?__TEXT_REGION_LENGTH__:0x20000
+                0x000000000000ffa0                __DATA_REGION_LENGTH__ = DEFINED (__DATA_REGION_LENGTH__)?__DATA_REGION_LENGTH__:0xffa0
+                0x0000000000010000                __EEPROM_REGION_LENGTH__ = DEFINED (__EEPROM_REGION_LENGTH__)?__EEPROM_REGION_LENGTH__:0x10000
+                0x0000000000000400                __FUSE_REGION_LENGTH__ = DEFINED (__FUSE_REGION_LENGTH__)?__FUSE_REGION_LENGTH__:0x400
+                0x0000000000000400                __LOCK_REGION_LENGTH__ = DEFINED (__LOCK_REGION_LENGTH__)?__LOCK_REGION_LENGTH__:0x400
+                0x0000000000000400                __SIGNATURE_REGION_LENGTH__ = DEFINED (__SIGNATURE_REGION_LENGTH__)?__SIGNATURE_REGION_LENGTH__:0x400
+                0x0000000000000400                __USER_SIGNATURE_REGION_LENGTH__ = DEFINED (__USER_SIGNATURE_REGION_LENGTH__)?__USER_SIGNATURE_REGION_LENGTH__:0x400
+
+.hash
+ *(.hash)
+
+.dynsym
+ *(.dynsym)
+
+.dynstr
+ *(.dynstr)
+
+.gnu.version
+ *(.gnu.version)
+
+.gnu.version_d
+ *(.gnu.version_d)
+
+.gnu.version_r
+ *(.gnu.version_r)
+
+.rel.init
+ *(.rel.init)
+
+.rela.init
+ *(.rela.init)
+
+.rel.text
+ *(.rel.text)
+ *(.rel.text.*)
+ *(.rel.gnu.linkonce.t*)
+
+.rela.text
+ *(.rela.text)
+ *(.rela.text.*)
+ *(.rela.gnu.linkonce.t*)
+
+.rel.fini
+ *(.rel.fini)
+
+.rela.fini
+ *(.rela.fini)
+
+.rel.rodata
+ *(.rel.rodata)
+ *(.rel.rodata.*)
+ *(.rel.gnu.linkonce.r*)
+
+.rela.rodata
+ *(.rela.rodata)
+ *(.rela.rodata.*)
+ *(.rela.gnu.linkonce.r*)
+
+.rel.data
+ *(.rel.data)
+ *(.rel.data.*)
+ *(.rel.gnu.linkonce.d*)
+
+.rela.data
+ *(.rela.data)
+ *(.rela.data.*)
+ *(.rela.gnu.linkonce.d*)
+
+.rel.ctors
+ *(.rel.ctors)
+
+.rela.ctors
+ *(.rela.ctors)
+
+.rel.dtors
+ *(.rel.dtors)
+
+.rela.dtors
+ *(.rela.dtors)
+
+.rel.got
+ *(.rel.got)
+
+.rela.got
+ *(.rela.got)
+
+.rel.bss
+ *(.rel.bss)
+
+.rela.bss
+ *(.rela.bss)
+
+.rel.plt
+ *(.rel.plt)
+
+.rela.plt
+ *(.rela.plt)
+
+.text           0x0000000000007800      0x7c6
+ *(.vectors)
+ *(.vectors)
+ *(.progmem.gcc*)
+                0x0000000000007800                . = ALIGN (0x2)
+                0x0000000000007800                __trampolines_start = .
+ *(.trampolines)
+ .trampolines   0x0000000000007800        0x0 linker stubs
+ *(.trampolines*)
+                0x0000000000007800                __trampolines_end = .
+ *libprintf_flt.a:*(.progmem.data)
+ *libc.a:*(.progmem.data)
+ *(.progmem.*)
+                0x0000000000007800                . = ALIGN (0x2)
+ *(.lowtext)
+ *(.lowtext*)
+                0x0000000000007800                __ctors_start = .
+ *(.ctors)
+                0x0000000000007800                __ctors_end = .
+                0x0000000000007800                __dtors_start = .
+ *(.dtors)
+                0x0000000000007800                __dtors_end = .
+ SORT_BY_NAME(*)(.ctors)
+ SORT_BY_NAME(*)(.dtors)
+ *(.init0)
+ *(.init0)
+ *(.init1)
+ *(.init1)
+ *(.init2)
+ *(.init2)
+ *(.init3)
+ *(.init3)
+ *(.init4)
+ .init4         0x0000000000007800       0x16 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_copy_data.o)
+                0x0000000000007800                __do_copy_data
+ .init4         0x0000000000007816       0x10 /usr/lib64/gcc/avr/7/avr5/libgcc.a(_clear_bss.o)
+                0x0000000000007816                __do_clear_bss
+ *(.init4)
+ *(.init5)
+ *(.init5)
+ *(.init6)
+ *(.init6)
+ *(.init7)
+ *(.init7)
+ *(.init8)
+ *(.init8)
+ *(.init9)
+ .init9         0x0000000000007826      0x45e MYSBootloader.o
+                0x0000000000007826                main
+ *(.init9)
+ *(.text)
+                0x0000000000007c84                . = ALIGN (0x2)
+ *(.text.*)
+ .text.getch    0x0000000000007c84       0x18 MYSBootloader.o
+ .text.programPage
+                0x0000000000007c9c       0x24 MYSBootloader.o
+ .text.calcCRCrom
+                0x0000000000007cc0       0x42 MYSBootloader.o
+ .text._buildMessageProto
+                0x0000000000007d02       0x18 MYSBootloader.o
+ .text.SPIBytes
+                0x0000000000007d1a       0x5a MYSBootloader.o
+ .text.writeAddress
+                0x0000000000007d74       0x20 MYSBootloader.o
+ .text.Flush_RXTX_CLI
+                0x0000000000007d94       0x1e MYSBootloader.o
+ .text.send_process_type
+                0x0000000000007db2      0x156 MYSBootloader.o
+ .text.putch    0x0000000000007f08        0xe MYSBootloader.o
+                0x0000000000007f08                putch
+ .text.verifySpace
+                0x0000000000007f16       0x18 MYSBootloader.o
+ .text.getNch   0x0000000000007f2e        0xe MYSBootloader.o
+ .text.updateEepromNodeFirmwareConfig
+                0x0000000000007f3c       0x2c MYSBootloader.o
+                0x0000000000007f3c                updateEepromNodeFirmwareConfig
+ .text.avr-libc
+                0x0000000000007f68       0x1a /usr/avr/sys-root/lib/avr5/libc.a(memcmp.o)
+                0x0000000000007f68                memcmp
+ .text.avr-libc
+                0x0000000000007f82       0x20 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eerd_block.o)
+                0x0000000000007f82                eeprom_read_block
+                0x0000000000007f86                eeprom_read_blraw
+ .text.avr-libc
+                0x0000000000007fa2       0x24 /usr/avr/sys-root/lib/avr5/libatmega328p.a(eeupd_byte.o)
+                0x0000000000007fa2                eeprom_update_byte
+                0x0000000000007fa4                eeprom_update_r18
+                0x0000000000007fc6                . = ALIGN (0x2)
+ *(.fini9)
+ *(.fini9)
+ *(.fini8)
+ *(.fini8)
+ *(.fini7)
+ *(.fini7)
+ *(.fini6)
+ *(.fini6)
+ *(.fini5)
+ *(.fini5)
+ *(.fini4)
+ *(.fini4)
+ *(.fini3)
+ *(.fini3)
+ *(.fini2)
+ *(.fini2)
+ *(.fini1)
+ *(.fini1)
+ *(.fini0)
+ *(.fini0)
+ *(.hightext)
+ *(.hightext*)
+ *(.progmemx.*)
+                0x0000000000007fc6                . = ALIGN (0x2)
+ *(.jumptables)
+ *(.jumptables*)
+                0x0000000000007fc6                _etext = .
+
+.data           0x0000000000800100        0x6 load address 0x0000000000007fc6
+                0x0000000000800100                PROVIDE (__data_start = .)
+ *(.data)
+ *(.data*)
+ .data.base_addr
+                0x0000000000800100        0x5 MYSBootloader.o
+                0x0000000000800100                base_addr
+ *(.gnu.linkonce.d*)
+ *(.rodata)
+ *(.rodata*)
+ *(.gnu.linkonce.r*)
+                0x0000000000800106                . = ALIGN (0x2)
+ *fill*         0x0000000000800105        0x1 
+                0x0000000000800106                _edata = .
+                0x0000000000800106                PROVIDE (__data_end = .)
+
+.bss            0x0000000000800106       0x47
+                0x0000000000800106                PROVIDE (__bss_start = .)
+ *(.bss)
+ *(.bss*)
+ *(COMMON)
+ COMMON         0x0000000000800106       0x47 MYSBootloader.o
+                0x0000000000800106                _outMsg
+                0x0000000000800127                _save_MCUSR
+                0x0000000000800128                _configuredParentID
+                0x0000000000800129                _eepromNodeConfig
+                0x000000000080012c                _inMsg
+                0x000000000080014d                PROVIDE (__bss_end = .)
+                0x0000000000007fc6                __data_load_start = LOADADDR (.data)
+                0x0000000000007fcc                __data_load_end = (__data_load_start + SIZEOF (.data))
+
+.noinit         0x000000000080014d        0x0
+                [!provide]                        PROVIDE (__noinit_start = .)
+ *(.noinit*)
+                [!provide]                        PROVIDE (__noinit_end = .)
+                0x000000000080014d                _end = .
+                [!provide]                        PROVIDE (__heap_start = .)
+
+.eeprom         0x0000000000810000        0x0
+ *(.eeprom*)
+                0x0000000000810000                __eeprom_end = .
+
+.fuse
+ *(.fuse)
+ *(.lfuse)
+ *(.hfuse)
+ *(.efuse)
+
+.lock
+ *(.lock*)
+
+.signature
+ *(.signature*)
+
+.stab
+ *(.stab)
+
+.stabstr
+ *(.stabstr)
+
+.stab.excl
+ *(.stab.excl)
+
+.stab.exclstr
+ *(.stab.exclstr)
+
+.stab.index
+ *(.stab.index)
+
+.stab.indexstr
+ *(.stab.indexstr)
+
+.comment        0x0000000000000000       0x40
+ *(.comment)
+ .comment       0x0000000000000000       0x40 MYSBootloader.o
+                                         0x41 (size before relaxing)
+
+.note.gnu.build-id
+                0x0000000000007fcc       0x24
+ *(.note.gnu.build-id)
+ .note.gnu.build-id
+                0x0000000000007fcc       0x24 linker stubs
+
+.debug
+ *(.debug)
+
+.line
+ *(.line)
+
+.debug_srcinfo
+ *(.debug_srcinfo)
+
+.debug_sfnames
+ *(.debug_sfnames)
+
+.debug_aranges
+ *(.debug_aranges)
+
+.debug_pubnames
+ *(.debug_pubnames)
+
+.debug_info
+ *(.debug_info .gnu.linkonce.wi.*)
+
+.debug_abbrev
+ *(.debug_abbrev)
+
+.debug_line
+ *(.debug_line .debug_line.* .debug_line_end)
+
+.debug_frame
+ *(.debug_frame)
+
+.debug_str
+ *(.debug_str)
+
+.debug_loc
+ *(.debug_loc)
+
+.debug_macinfo
+ *(.debug_macinfo)
+
+.debug_weaknames
+ *(.debug_weaknames)
+
+.debug_funcnames
+ *(.debug_funcnames)
+
+.debug_typenames
+ *(.debug_typenames)
+
+.debug_varnames
+ *(.debug_varnames)
+
+.debug_pubtypes
+ *(.debug_pubtypes)
+
+.debug_ranges
+ *(.debug_ranges)
+
+.debug_macro
+ *(.debug_macro)
+
+.debug_addr
+ *(.debug_addr)
+OUTPUT(MYSBootloader.elf elf32-avr)
+LOAD linker stubs
