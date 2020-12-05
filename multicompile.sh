@@ -13,21 +13,21 @@ for f in "${clock_speeds[@]}"
    
       if [ $f == "16000000L" ]
       then
-       baudios="115200"
+       baudrate="115200"
       fi
   
       if [ $f == "8000000L" ] 
       then
-       baudios="57600"
+       baudrate="57600"
       fi 
   
       if [ $f == "1000000L" ] 
       then
-       baudios="9600"
+       baudrate="9600"
       fi
      
-      echo "Frecuency: $f Channel: $i Baud rate: $baudios Power level: $p"
-      sed -e "s/\${frecuency}/$f/" -e "s/\${baudios}/$baudios/" Makefile.original > Makefile
+      echo "Frequency: $f Channel: $i Baud rate: $baudrate Power level: $p"
+      sed -e "s/\${frequency}/$f/" -e "s/\${baudrate}/$baudrate/" Makefile.original > Makefile
       make
       if [ `avr-size -B -d MYSBootloader.elf  | tail -n 1 | awk '{print $1+$2}'` -le 2048 ]
       then 
