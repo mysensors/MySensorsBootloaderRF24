@@ -1,8 +1,8 @@
 PROJECT = MYSBootloader
 
 MCU = atmega328p
-CLK = ${frecuency}
-BAUDRATE = ${baudios}
+CLK = ${frequency}
+BAUDRATE = ${baudrate}
 
 
 ISP_PORT = com5
