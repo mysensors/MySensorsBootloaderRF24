@@ -49,6 +49,8 @@
  *
  */
 
+
+
 // RF24 communication settings *****************************************************************************************
 #define RF24_CHANNEL		(110)			// RF channel for the sensor net, 0-127; default 76
 #define RF24_DATARATE		RF24_250KBPS	// RF24_250KBPS for 250kbs, RF24_1MBPS for 1Mbps, or RF24_2MBPS for 2Mbps
@@ -64,14 +66,19 @@
 #define BOOTLOADER_COMMANDS					// Enable low level bootloader commands
 
 // SPI bus setting *****************************************************************************************************
-#define SPI_PINS_CE9_CSN10							
-//define SPI_PINS_CSN7_CE8
-//define SPI_PINS_CE7_CSN10
+// Uncomment exactly one line matching your board's nRF24 wiring.
+#define SPI_PINS_CE9_CSN10 // Default MySensors
+// #define SPI_PINS_CSN7_CE8
+// #define SPI_PINS_CE7_CSN8  // RF-Nano Red
+// #define SPI_PINS_CE7_CSN10
+// #define SPI_PINS_CE4_CSN10
+// #define SPI_PINS_CE10_CSN9 // RF-Nano Black
+// #define SPI_PINS_CE4_CSN5  // CE=D4, CSN=D5 (e.g. RFduino, some RF-Nano variants)
 
 // LED settings ********************************************************************************************************
 #define LED_DDR     DDRB
 #define LED_PORT    PORTB
-#define LED_PIN		PINB5 //NRFDuino uses PIN 9 (PB1)
+#define LED_PIN	    PINB5 //NRFDuino uses PIN 9 (PB1)
 
 // DEBUG settings ******************************************************************************************************
 //#define DEBUG
@@ -104,5 +111,3 @@ int main(void) {
 	}
 	MySensorsBootloader();
 }
-
-
