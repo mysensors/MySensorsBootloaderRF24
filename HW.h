@@ -95,37 +95,56 @@ static void watchdogConfig(const uint8_t wdtConfig) {
 #if defined(SPI_PINS_CE9_CSN10)
 	#define CSN_PORT	PORTB	// port for CSN
 	#define CSN_DDR		DDRB	// DDR for CSN
-	#define	CSN_PIN		PB2		// Arduino Pin 10 <-> Bit 2 of port B
-
+	#define	CSN_PIN		PB2	// Arduino Pin 10 <-> Bit 2 of port B
 	#define CE_PORT		PORTB	// port for CE 
 	#define CE_DDR		DDRB	// DDR for CE
-	#define	CE_PIN		PB1		// Arduino Pin  9 <-> Bit 1 of port B
+	#define	CE_PIN		PB1	// Arduino Pin  9 <-> Bit 1 of port B
 #elif defined(SPI_PINS_CSN7_CE8)
 	#define CSN_PORT	PORTD	// port for CSN
 	#define CSN_DDR		DDRD	// DDR for CSN
-	#define	CSN_PIN		PD7		// Arduino Pin 7 <-> Bit 7 of port D
-
+	#define	CSN_PIN		PD7	// Arduino Pin 7 <-> Bit 7 of port D
 	#define CE_PORT		PORTB	// port for CE
 	#define CE_DDR		DDRB	// DDR for CE
-	#define	CE_PIN		PB0		// Arduino Pin  8 <-> Bit 0 of port B
+	#define	CE_PIN		PB0	// Arduino Pin  8 <-> Bit 0 of port B
+#elif defined(SPI_PINS_CE7_CSN8)
+	#define CE_PORT		PORTD	// port for CE
+	#define CE_DDR		DDRD	// DDR for CE
+	#define	CE_PIN		PD7	// Arduino Pin 7 <-> Bit 7 of port D
+	#define CSN_PORT	PORTB	// port for CSN
+	#define CSN_DDR		DDRB	// DDR for CSN
+	#define	CSN_PIN		PB0	// Arduino Pin  8 <-> Bit 0 of port B
 #elif defined(SPI_PINS_CE4_CSN10)
 	#define CSN_PORT	PORTB	// port for CSN
 	#define CSN_DDR		DDRB	// DDR for CSN
-	#define	CSN_PIN		PB2		// Arduino Pin 10 <-> Bit 2 of port B
-
+	#define	CSN_PIN		PB2	// Arduino Pin 10 <-> Bit 2 of port B
 	#define CE_PORT		PORTD	// port for CE
 	#define CE_DDR		DDRD	// DDR for CE
-	#define	CE_PIN		PD4		// Arduino Pin  4 <-> Bit 4 of port D
+	#define	CE_PIN		PD4	// Arduino Pin  4 <-> Bit 4 of port D
 #elif defined(SPI_PINS_CE7_CSN10)
 	// NRF24Duino Configuration
 	#define CE_PORT		PORTD	// port for CE
 	#define CE_DDR		DDRD	// DDR for CE
-	#define	CE_PIN		PD7		// Arduino Pin 7 <-> Bit 7 of port D
-
+	#define	CE_PIN		PD7	// Arduino Pin 7 <-> Bit 7 of port D
 	#define CSN_PORT	PORTB	// port for CSN
 	#define CSN_DDR		DDRB	// DDR for CSN
-	#define	CSN_PIN		PB2		// Arduino Pin  10 <-> Bit 2 of port B
+	#define	CSN_PIN		PB2	// Arduino Pin  10 <-> Bit 2 of port B
 	// NRF24Duino has LED on Pin 9 set the LED_PIN in MYSBootloader.c to PB1
+#elif defined(SPI_PINS_CE10_CSN9)
+	// RF-Nano Black
+	#define CE_PORT		PORTB	// port for CE
+	#define CE_DDR		DDRB	// DDR for CE
+	#define	CE_PIN		PB2	// Arduino Pin 10 <-> Bit 2 of port B
+	#define CSN_PORT	PORTB	// port for CSN
+	#define CSN_DDR		DDRB	// DDR for CSN
+	#define	CSN_PIN		PB1	// Arduino Pin  9 <-> Bit 1 of port B
+#elif defined(SPI_PINS_CE4_CSN5)
+	// CE = D4 (PD4), CSN = D5 (PD5)
+	#define CE_PORT		PORTD
+	#define CE_DDR		DDRD
+	#define	CE_PIN		PD4
+	#define CSN_PORT	PORTD
+	#define CSN_DDR		DDRD
+	#define	CSN_PIN		PD5
 #endif
 
 #define CSN_LOW()	CSN_PORT &= ~_BV(CSN_PIN)
@@ -141,8 +160,14 @@ static void initSPI(void) {
 		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(CE_PIN) | _BV(CSN_PIN);
 	#elif defined(SPI_PINS_CSN7_CE8)
 		// PB2 is SS pin has to be defined as OUTPUT, else SPI goes to slave mode
-		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(CE_PIN) | _BV(PB2);	
+		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(CE_PIN) | _BV(PB2);
 		CSN_DDR = _BV(CSN_PIN);
+	#elif defined(SPI_PINS_CE7_CSN8)
+		// RF-Nano Red
+		// PB2 is SS pin has to be defined as OUTPUT, else SPI goes to slave mode
+		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(PB2);
+		CSN_DDR = _BV(CSN_PIN);
+		CE_DDR  = _BV(CE_PIN);
 	#elif defined(SPI_PINS_CE4_CSN10)
 		// PB2 is SS pin has to be defined as OUTPUT, else SPI goes to slave mode
 		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(PB2) | _BV(CSN_PIN);
@@ -151,6 +176,18 @@ static void initSPI(void) {
 		// PB2 is SS pin has to be defined as OUTPUT, else SPI goes to slave mode
 		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(PB2) | _BV(CSN_PIN);
 		CE_DDR = _BV(CE_PIN);
+	#elif defined(SPI_PINS_CE10_CSN9)
+		// RF-Nano Black
+		// PB2 is SS pin has to be defined as OUTPUT, else SPI goes to slave mode
+		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(PB2);
+		CSN_DDR = _BV(CSN_PIN);
+		CE_DDR  = _BV(CE_PIN);
+	#elif defined(SPI_PINS_CE4_CSN5)
+		// CE = PD4, CSN = PD5
+		// PB2 is SS pin has to be defined as OUTPUT, else SPI goes to slave mode
+		SPI_DDR = _BV(SPI_MOSI) | _BV(SPI_SCLK) | _BV(PB2);
+		CE_DDR  = _BV(CE_PIN);
+		CSN_DDR = _BV(CSN_PIN);
 	#endif
 	
 	// SPE	=	SPI enable

@@ -18,13 +18,15 @@
 #define BOOTLOADER_START_ADDRESS (0x8000 - BOOTLOADER_SIZE)
 
 // DEBUG led patterns  *************************************************************************************************
+// DEBUG_PORT is written with '=' (not '|=') so each state replaces the
+// previous one. Values must fit in 8 bits (the port width).
 
 #define DEBUG_INIT				_BV(3)
 #define DEBUG_READ_CONFIG		_BV(4)
 #define DEBUG_FIND_PARENTS		_BV(5)
 #define DEBUG_CHECK_ID			_BV(6)
 #define DEBUG_CONFIGURATION		_BV(7)
-#define DEBUG_CONFIG_RECEIVED	_BV(8)
+#define DEBUG_CONFIG_RECEIVED	_BV(5)  // was _BV(8), truncated to 0 on 8-bit port
 #define DEBUG_INIT_UPDATE		_BV(6) | _BV(7)
 #define DEBUG_DO_UPDATE			_BV(4) | _BV(5) | _BV(7)
 #define DEBUG_PREPARE_RUN		_BV(4) | _BV(5) | _BV(7)
